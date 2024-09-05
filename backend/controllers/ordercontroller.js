@@ -103,7 +103,7 @@ async function updateStock(productid,quantity){
 }
 
 exports.deleteorder=catcherror(async(req,res,next)=>{
-    const orders=await ordermodel.findByIdAndDelete(req.params.id)
+    const order=await ordermodel.findByIdAndDelete(req.params.id)
 
     
 

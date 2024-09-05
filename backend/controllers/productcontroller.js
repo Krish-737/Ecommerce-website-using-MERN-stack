@@ -35,6 +35,18 @@ exports.getproducts=async(req,res,next)=>{
 }
 // creating product
 exports.newproduct=catcherror( async(req,res,next)=>{
+    let images=[]
+    let BASE_URL=process.env.BACKEND_URL;
+    if(process.env.NODE_ENV==='production'){
+        BASE_URL=`${req.protocol}://${req.get('host')}`
+    }
+    if(req.files.length>0){
+        req.files.forEach(file=>{
+            let url=`${BASE_URL}/uploads/product/${file.originalname}`
+            images.push({image:url})
+        })
+    }
+    req.body.images=images
     req.body.user=req.user.id
    const product= await Product.create(req.body)
    res.status(201).json({
@@ -46,7 +58,7 @@ exports.newproduct=catcherror( async(req,res,next)=>{
 // single product
 
 exports.getsingleproduct=async(req,res,next)=>{
-    const product=await Product.findById(req.params.id)
+    const product=await Product.findById(req.params.id).populate('reviews.user','name email')
     if(!product){
         return next(new errorhandler('product not found',400))
     }
@@ -62,13 +74,32 @@ exports.getsingleproduct=async(req,res,next)=>{
 exports.updateproduct=catcherror(async(req,res,next)=>{
     let product=await Product.findById(req.params.id)
 
+   
+    let images=[]
+    if(req.body.imagescleared==='false'){
+        images=product.images
+    }
+    let BASE_URL=process.env.BACKEND_URL;
+    if(process.env.NODE_ENV==='production'){
+        BASE_URL=`${req.protocol}://${req.get('host')}`
+    }
+    if(req.files.length>0){
+        req.files.forEach(file=>{
+            let url=`${BASE_URL}/uploads/product/${file.originalname}`
+            images.push({image:url})
+        })
+    
+    }
+    req.body.images=images
     if(!product) {
         return next(new errorhandler('product not found',400))
     }
     product= await Product.findByIdAndUpdate(req.params.id,req.body,{
         new:true,
         runValidators:true
+
     })
+    
     res.status(201).json({
         success:true,
         message:"upadated successfully",
@@ -129,7 +160,7 @@ exports.createreview=catcherror(async(req,res,next)=>{
 })
 
 exports.getreviews=catcherror(async(req,res,next)=>{
-    const product=await Product.findById(req.query.id)
+    const product=await Product.findById(req.query.id).populate('reviews.user','name email')
 
     res.status(200).json({
         success:true,
@@ -138,7 +169,7 @@ exports.getreviews=catcherror(async(req,res,next)=>{
 })
 
 exports.deletereview=catcherror(async(req,res,next)=>{
-    const product=await Product.findById(req.query.pid)
+    const product=await Product.findById(req.query.productid)
 
     const reviews=product.reviews.filter(review=>{
         return review._id.toString()!==req.query.id.toString()
@@ -149,7 +180,7 @@ exports.deletereview=catcherror(async(req,res,next)=>{
     },0)/reviews.length
     product.ratings=isNaN(product.ratings)?0:product.ratings
 
-    await Product.findByIdAndUpdate(req.query.pid,{
+    await Product.findByIdAndUpdate(req.query.productid,{
         reviews,
         numOfReviews,
         ratings
@@ -160,4 +191,14 @@ exports.deletereview=catcherror(async(req,res,next)=>{
         numOfReviews,
         ratings
     })
+})
+
+exports.getadminproduct=catcherror(async(req,res,next)=>{
+
+    const products=await Product.find()
+    res.status(200).json({
+        sucess:true,
+        products
+
+})
 })

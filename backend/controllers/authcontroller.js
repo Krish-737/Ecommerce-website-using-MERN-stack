@@ -9,8 +9,17 @@ const crypto=require('crypto')
 
 
 exports.registeruser=catcherror( async(req,res,next)=>{
-    const{name,email,password,avatar}=req.body
+    const{name,email,password}=req.body
 
+
+    let avatar;
+    let BASE_URL=process.env.BACKEND_URL;
+    if(process.env.NODE_ENV==='production'){
+        BASE_URL=`${req.protocol}://${req.get('host')}`
+    }
+    if(req.file){
+        avatar=`${BASE_URL}/uploads/users/${req.file.originalname}`
+    }
     const user=await usermodel.create({
         name,
         email,
@@ -66,8 +75,12 @@ exports.forgetpassword=catcherror(async(req,res,next)=>{
 
     const resettoken=user.getresettoken();
     user.save({validateBeforeSave:false})
+    let BASE_URL=process.env.FRONTEND_URL;
+    if(process.env.NODE_ENV==='production'){
+        BASE_URL=`${req.protocol}://${req.get('host')}`
+    }
 
-    const reseturl=`${req.protocol}://${req.get('host')}/api/v1/password/reset/${resettoken}`
+    const reseturl=`${BASE_URL}/password/reset/${resettoken}`
 
     const message=`your password reset url \n\n${reseturl}\n\n please ignore it if you not done`
 
@@ -117,10 +130,10 @@ exports.changepassword=catcherror(async(req,res,next)=>{
     const user=await usermodel.findById(req.user.id).select('+password')
 
     if(!await user.isvalidpass(req.body.oldpassword)){
-        return next(new errorhandler("password does not match",401)) 
+        return next(new errorhandler("oldpassword does not match",401)) 
     }
 
-    user.password=req.body.newpassword
+    user.password=req.body.password
     await user.save()
     res.status(200).json({
         sucess:true,
@@ -140,10 +153,20 @@ exports.getprofile=catcherror(async(req,res,next)=>{
     })
 })
 exports.updateprofile=catcherror(async(req,res,next)=>{
-    const userdata={
+    let userdata={
         email:req.body.email,
         name:req.body.name
     }
+    let avatar;
+    let BASE_URL=process.env.BACKEND_URL;
+    if(process.env.NODE_ENV==='production'){
+        BASE_URL=`${req.protocol}://${req.get('host')}`
+    }
+    if(req.file){
+        avatar=`${BASE_URL}/uploads/users/${req.file.originalname}`
+        userdata={...userdata,avatar}
+    }
+    
 
     const user=await usermodel.findByIdAndUpdate(req.user.id,userdata,{
         new:true,

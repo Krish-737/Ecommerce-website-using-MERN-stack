@@ -1,9 +1,9 @@
 import { Fragment, useEffect, useState } from "react";
 import Metadata from "./Metadata";
-import { getproducts } from "../../products/productsaction";
+import { getproducts } from "../actions/productsaction";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "./Loader";
-import Product from "../../products/Product";
+import Product from "../products/Product";
 import { toast } from "react-toastify";
 import Pagination from "react-js-pagination"
 
@@ -25,7 +25,7 @@ export default function Home(){
       })
     }
     
-    dispatch(getproducts(null,currentpage))
+    dispatch(getproducts(null,null,null,null,currentpage))
   },[error,dispatch,currentpage])
 
     return (
@@ -38,7 +38,7 @@ export default function Home(){
               <div className="row">
                 {products &&
                   products.map(product => (
-                  <Product key={product._id}product={product}/>
+                  <Product col={3} key={product._id}product={product}/>
                   ))}
               </div>
             </section>

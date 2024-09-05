@@ -4,7 +4,13 @@ const productslice=createSlice({
     name:'product',
     initialState:{
         loading:false,
-        product:{}
+        product:{},
+        isreviewsubmitted:false,
+        isproductcreated:false,
+        isdeleted:false,
+        isproductupdated:false,
+        isreviewdeleted:false,
+        reviews:[]
     },
     reducers:{
         productrequest(state,action){
@@ -24,7 +30,194 @@ const productslice=createSlice({
                 loading:false,
                 error:action.payload
             }
-        }
+        },
+        createreviewrequest(state,action){
+            return{
+                ...state,
+                loading:true,
+            
+            }
+        },
+        createreviewsuccess(state,action){
+            return{
+                ...state,
+                loading:false,
+                isreviewsubmitted:true
+            }
+        },
+        createreviewfail(state,action){
+            return{
+                ...state,
+                loading:false,
+                error:action.payload
+            }
+        },
+        clearreviewerror(state,action){
+            return{
+                ...state,
+                error:null
+            }
+        },
+        clearreviewsubitted(state,action){
+            return{
+                ...state,
+                isreviewsubmitted:false
+            }
+        },
+        clearproduct(state,action){
+            return{
+                
+                product:{}
+            }
+        },
+        newproductrequest(state,action){
+            return{
+                ...state,
+                loading:true,
+            
+            }
+        },
+        newproductsuccess(state,action){
+            return{
+                loading:false,
+                product:action.payload.product,
+                isproductcreated:true
+            }
+        },
+        newproductfail(state,action){
+            return{
+                loading:false,
+                error:action.payload,
+                isproductcreated:false
+            }
+        },
+        clearproductcreated(state,action){
+            return{
+                ...state,
+                isproductcreated:false
+            }
+        },
+        clearproducterror(state,action){
+            return{
+                ...state,
+                error:null
+            }
+        },
+        productdeleterequest(state,action){
+            return{
+                loading:true,
+            
+            }
+        },
+        productdeletesuccess(state,action){
+            return{
+                loading:false,
+                product:[],
+                isdeleted:true
+
+            }
+        },
+        productdeletefail(state,action){
+            return{
+                loading:false,
+                error:action.payload,
+                isdeleted:false
+            }
+        },
+        clearproductdeleted(state,action){
+            return{
+                ...state,
+                isdeleted:false
+            }
+        },
+        cleardeletederror(state,action){
+            return{
+                ...state,
+                error:null
+            }
+        },
+        updateproductrequest(state,action){
+            return{
+                loading:true,
+                isproductupdated:false
+            
+            }
+        },
+        updateproductsuccess(state,action){
+            return{
+                loading:false,
+                product:action.payload.product,
+                isproductupdated:true
+            }
+        },
+        updateproductfail(state,action){
+            return{
+                loading:false,
+                error:action.payload,
+                isproductupdated:false
+            }
+        },
+        updateerror(state,action){
+            return{
+                ...state,
+                error:null
+            }
+        },
+        clearisupdated(state,action){
+            return{
+                ...state,
+                isproductupdated:false
+            }
+        },
+        reviewsrequest(state,action){
+            return{
+                ...state,
+                loading:true,
+            
+            }
+        },
+        reviewssuccess(state,action){
+            return{
+                ...state,
+                loading:false,
+                reviews:action.payload.reviews
+            }
+        },
+        reviewsfail(state,action){
+            return{
+                ...state,
+                loading:false,
+                error:action.payload
+            }
+        },
+        deletereviewrequest(state,action){
+            return{
+                ...state,
+                loading:true,
+            
+            }
+        },
+        deletereviewsuccess(state,action){
+            return{
+                ...state,
+                loading:false,
+                isreviewdeleted:true
+            }
+        },
+        deletereviewfail(state,action){
+            return{
+                ...state,
+                loading:false,
+                error:action.payload
+            }
+        },
+        clearreviewdeleted(state,action){
+            return{
+                ...state,
+                isreviewdeleted:false
+            }
+        },
+
         }
 
 })
@@ -32,6 +225,15 @@ const productslice=createSlice({
 
 const {actions,reducer}=productslice
 
-export const {productrequest,productsuccess,productfail}=actions
+export const {productrequest,productsuccess,productfail,
+    createreviewfail,createreviewrequest,createreviewsuccess,clearreviewerror,clearreviewsubitted,
+    clearproduct,
+    newproductrequest,newproductsuccess,newproductfail,clearproductcreated,clearproducterror,
+    productdeleterequest,productdeletesuccess,productdeletefail,clearproductdeleted,cleardeletederror,
+    updateproductrequest,updateproductsuccess,updateproductfail,updateerror,clearisupdated,
+    reviewsrequest,reviewssuccess,reviewsfail,
+    deletereviewrequest,deletereviewsuccess,deletereviewfail,clearreviewdeleted
+
+}=actions
 
 export default reducer;

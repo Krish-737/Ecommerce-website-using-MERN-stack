@@ -15,7 +15,7 @@ const upload=multer({storage:multer.diskStorage({
     }
 })})
 
-router.route('/products').get(getproducts);
+router.route('https://ecommerce-website-using-mern-stack-1-qeje.onrender.com/products').get(getproducts);
 
 router.route('/product/:id').get(getsingleproduct)
                             

@@ -4,7 +4,7 @@
   "description": "ecomm",
   "main": "server.js",
   "scripts": {
-    "start": "node backend/server.js",
+    "start": "node backend/server.js && node backend/utils/seed.js",
     "dev": "set NODE_ENV=development&&nodemon backend/server.js",
     "prod": "set NODE_ENV=production&&nodemon backend/server.js",
     "seed": "node backend/utils/seed.js",
